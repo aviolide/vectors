@@ -9,6 +9,11 @@ import { tilingModule } from "./modules/tiling";
 import { noiseModule } from "./modules/noise";
 import { animationModule } from "./modules/animation";
 import { compositionModule } from "./modules/composition";
+import { projectionModule } from "./modules/projection";
+import { rasterizationModule } from "./modules/rasterization";
+import { raytracing2dModule } from "./modules/raytracing2d";
+import { raymarchingModule } from "./modules/raymarching";
+import { raycastingModule } from "./modules/raycasting";
 
 /**
  * Curriculum index. Order is the canonical learning path; each module is
@@ -27,6 +32,11 @@ export const MODULES: Module[] = [
   noiseModule,
   animationModule,
   compositionModule,
+  projectionModule,
+  rasterizationModule,
+  raytracing2dModule,
+  raymarchingModule,
+  raycastingModule,
 ].sort((a, b) => a.order - b.order);
 
 const moduleById = new Map(MODULES.map((m) => [m.id, m]));

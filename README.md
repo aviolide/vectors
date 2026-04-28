@@ -20,23 +20,30 @@ Requires a browser with WebGL2.
 
 ### Curriculum
 
-| #  | Module                       | Status                              |
-|----|------------------------------|-------------------------------------|
-| 01 | Vectors & Coordinates        | 1 task                              |
-| 02 | **Distance & SDF**           | **4 lessons + 5 hand-authored tasks** (featured) |
-| 03 | Shape Operations             | 1 task                              |
-| 04 | Transformations              | 1 task                              |
-| 05 | Lighting & Dot Product       | 1 task                              |
-| 06 | GLSL Utility Functions       | 1 task                              |
-| 07 | Tiling & Patterns            | 1 task                              |
-| 08 | Noise                        | 1 task                              |
-| 09 | Animation                    | 1 task                              |
-| 10 | Composition                  | 1 task                              |
+| #  | Module                       | Status                                            |
+|----|------------------------------|---------------------------------------------------|
+| 01 | Vectors & Coordinates        | 5 tasks (uv, dot, cross, aspect, change-of-basis) |
+| 02 | **Distance & SDF**           | **4 lessons + 5 tasks** (featured)                |
+| 03 | Shape Operations             | 1 task                                            |
+| 04 | Transformations              | 3 tasks (rotate, TRS, perspective divide)         |
+| 05 | Lighting & Dot Product       | 4 tasks (Lambert, Phong, reflect, multi-light)    |
+| 06 | GLSL Utility Functions       | 1 task                                            |
+| 07 | Tiling & Patterns            | 1 task                                            |
+| 08 | Noise                        | 3 tasks (value, fbm, domain warp)                 |
+| 09 | Animation                    | 1 task                                            |
+| 10 | Composition                  | 2 tasks (glow, fireball)                          |
+| 11 | Projection & Cameras         | 2 tasks (perspective grid, lookAt)                |
+| 12 | Rasterization                | 3 tasks (triangle fill, varying interp, z-buffer) |
+| 13 | Ray Tracing (2D)             | 2 tasks (ray–disk, shaded hit)                    |
+| 14 | Sphere Tracing               | 2 tasks (march loop, FD normals)                  |
+| 15 | Raycasting (FPS)             | 2 tasks (column heights, tile-map raycaster)      |
 
-The **Distance & SDF** module is the reference implementation. The other nine
-modules each ship with at least one fully validated task as scaffolding for
-future expansion. The `ShaderTask` schema is identical across modules — adding
-a task is purely a content edit, no engine work required.
+Modules 11–15 are direct adaptations of the [ssloy](https://github.com/ssloy)
+software-rendering courses (`tinyrenderer`, `tinyraytracer`, `tinyraycaster`,
+`tinykaboom`), reworked into 2D fragment-shader form so each technique fits in
+a single GLSL file the learner can edit live. **Distance & SDF** is the
+reference implementation; the `ShaderTask` schema is identical across modules,
+so adding a task is purely a content edit — no engine work required.
 
 ### Task types
 
