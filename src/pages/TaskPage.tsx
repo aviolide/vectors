@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { getTask } from "../content";
+import { getLocalizedTask } from "../content";
 import { ShaderEditor } from "../components/ShaderEditor";
 import { PreviewCanvas } from "../components/PreviewCanvas";
 import { HintSystem } from "../components/HintSystem";
@@ -8,10 +8,14 @@ import { useProgress } from "../store/progress";
 import { runValidation, type ValidationResult } from "../engine/validation";
 import { validators } from "../engine/validators";
 import type { CompileError, RunnerHandle } from "../engine/shaderRunner";
+import { useLocale } from "../i18n";
+import { useUI } from "../i18n/ui";
 
 export function TaskPage() {
   const { taskId = "" } = useParams();
-  const found = getTask(taskId);
+  const locale = useLocale((s) => s.locale);
+  const ui = useUI(locale);
+  const found = getLocalizedTask(taskId, locale);
 
   const getDraft = useProgress((s) => s.getDraft);
   const saveDraft = useProgress((s) => s.saveDraft);
@@ -56,13 +60,13 @@ export function TaskPage() {
   const handleValidate = useCallback(() => {
     if (!found || !runnerRef.current) return;
     if (compileErr) {
-      setValidation({ pass: false, details: [], message: "Fix compile errors first." });
+      setValidation({ pass: false, details: [], message: ui.fixErrorsFirst });
       return;
     }
     const result = runValidation(runnerRef.current, found.task.validation, validators);
     setValidation(result);
     if (result.pass) markComplete(found.task.id);
-  }, [found, compileErr, markComplete]);
+  }, [found, compileErr, markComplete, ui.fixErrorsFirst]);
 
   const handleShowSolution = useCallback(() => {
     if (!found) return;
@@ -85,8 +89,8 @@ export function TaskPage() {
   if (!found) {
     return (
       <div className="container">
-        <h1>Task not found</h1>
-        <Link to="/">Back</Link>
+        <h1>{ui.taskNotFound}</h1>
+        <Link to="/">{ui.backToModules}</Link>
       </div>
     );
   }
@@ -104,28 +108,28 @@ export function TaskPage() {
           <div className="taskpage__meta">
             <span className={`pill pill--${task.difficulty}`}>{task.difficulty}</span>
             <span className="pill">{task.taskType}</span>
-            {isComplete && <span className="badge badge--done">complete</span>}
+            {isComplete && <span className="badge badge--done">{ui.complete}</span>}
           </div>
         </div>
 
         <section>
-          <h2>Description</h2>
+          <h2>{ui.description}</h2>
           <p>{task.description}</p>
         </section>
 
         <section>
-          <h2>Goal</h2>
+          <h2>{ui.goal}</h2>
           <p>{task.goal}</p>
         </section>
 
         <section>
-          <h2>Expected visual</h2>
+          <h2>{ui.expectedVisual}</h2>
           <p>{task.expectedVisual}</p>
         </section>
 
         {task.theory && (
           <section>
-            <h2>Theory</h2>
+            <h2>{ui.theory}</h2>
             <p>{task.theory}</p>
           </section>
         )}
@@ -134,14 +138,14 @@ export function TaskPage() {
 
         {task.challenge && (
           <section className="challenge">
-            <h2>Bonus challenge</h2>
+            <h2>{ui.bonusChallenge}</h2>
             <p>{task.challenge.description}</p>
           </section>
         )}
 
         <section className="taskpage__actions">
           <button onClick={handleShowSolution} disabled={hasShownSolution}>
-            {hasShownSolution ? "Solution loaded" : "Show solution"}
+            {hasShownSolution ? ui.solutionLoaded : ui.showSolution}
           </button>
         </section>
       </aside>
@@ -150,19 +154,21 @@ export function TaskPage() {
         <div className="taskpage__editor">
           <div className="toolbar">
             <button className="btn btn--primary" onClick={handleRun}>
-              Run
+              {ui.run}
             </button>
             <button className="btn" onClick={handleReset}>
-              Reset
+              {ui.reset}
             </button>
             <button className="btn btn--accent" onClick={handleValidate}>
-              Validate
+              {ui.validate}
             </button>
             <span className="toolbar__spacer" />
             {compileErr ? (
-              <span className="status status--err">⨯ {compileErr.stage} error</span>
+              <span className="status status--err">
+                {ui.error} {compileErr.stage} error
+              </span>
             ) : (
-              <span className="status status--ok">● shader live</span>
+              <span className="status status--ok">{ui.shaderLive}</span>
             )}
           </div>
           <ShaderEditor value={code} onChange={handleEdit} />
@@ -187,7 +193,7 @@ export function TaskPage() {
                 validation.pass ? "valresult--pass" : "valresult--fail"
               }`}
             >
-              <strong>{validation.pass ? "PASS" : "FAIL"}</strong>
+              <strong>{validation.pass ? ui.validationPass : ui.validationFail}</strong>
               <span>{validation.message}</span>
               {validation.details.length > 0 && (
                 <ul className="valresult__list">

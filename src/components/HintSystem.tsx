@@ -1,14 +1,13 @@
 import type { Hint } from "../types";
 import { useProgress } from "../store/progress";
+import { useLocale } from "../i18n";
+import { useUI } from "../i18n/ui";
 
 type Props = { taskId: string; hints: Hint[] };
 
-/**
- * Progressive hints: each hint unlocks the next. We never auto-reveal — the
- * learner must explicitly request the next one. Once a hint is unlocked it
- * stays unlocked across sessions (persisted).
- */
 export function HintSystem({ taskId, hints }: Props) {
+  const locale = useLocale((s) => s.locale);
+  const ui = useUI(locale);
   const isHintUnlocked = useProgress((s) => s.isHintUnlocked);
   const unlockHint = useProgress((s) => s.unlockHint);
   // Subscribe to the bag so re-renders happen on unlocks.
@@ -18,8 +17,8 @@ export function HintSystem({ taskId, hints }: Props) {
 
   return (
     <div className="hints">
-      <h3>Hints</h3>
-      {hints.length === 0 && <p className="muted">No hints for this task.</p>}
+      <h3>{ui.hints}</h3>
+      {hints.length === 0 && <p className="muted">{ui.noHints}</p>}
       <ol>
         {hints.map((h, i) => {
           const unlocked = isHintUnlocked(taskId, h.id);
@@ -34,7 +33,7 @@ export function HintSystem({ taskId, hints }: Props) {
             return (
               <li key={h.id} className="hint hint--locked">
                 <button onClick={() => unlockHint(taskId, h.id)}>
-                  Reveal hint {i + 1}
+                  {ui.revealHint} {i + 1}
                 </button>
               </li>
             );

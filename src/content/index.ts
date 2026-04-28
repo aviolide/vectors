@@ -1,4 +1,7 @@
 import type { Module, ShaderTask } from "../types";
+import { localizeModule } from "../i18n/localize";
+import type { Locale } from "../i18n";
+import { ru } from "./translations/ru";
 import { vectorsCoordsModule } from "./modules/vectorsCoords";
 import { distanceSdfModule } from "./modules/distanceSdf";
 import { shapeOpsModule } from "./modules/shapeOps";
@@ -54,4 +57,23 @@ export function getTask(id: string): { module: Module; task: ShaderTask } | unde
 
 export function allTasks(): ShaderTask[] {
   return MODULES.flatMap((m) => m.tasks);
+}
+
+export function getLocalizedModule(id: string, locale: Locale): Module | undefined {
+  const raw = moduleById.get(id);
+  if (!raw) return undefined;
+  if (locale === "en") return raw;
+  return localizeModule(raw, ru[id]);
+}
+
+export function getLocalizedTask(
+  id: string,
+  locale: Locale
+): { module: Module; task: ShaderTask } | undefined {
+  const found = taskIndex.get(id);
+  if (!found) return undefined;
+  if (locale === "en") return found;
+  const locMod = localizeModule(found.module, ru[found.module.id]);
+  const locTask = locMod.tasks.find((t) => t.id === id);
+  return locTask ? { module: locMod, task: locTask } : found;
 }

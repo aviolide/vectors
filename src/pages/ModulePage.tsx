@@ -1,32 +1,36 @@
 import { Link, useParams } from "react-router-dom";
-import { getModule } from "../content";
+import { getLocalizedModule } from "../content";
 import { ModuleProgress } from "../components/ModuleProgress";
 import { useProgress } from "../store/progress";
-
-const DIFFICULTY_LABEL: Record<string, string> = {
-  easy: "Easy",
-  medium: "Medium",
-  hard: "Hard",
-};
+import { useLocale } from "../i18n";
+import { useUI } from "../i18n/ui";
 
 export function ModulePage() {
   const { moduleId = "" } = useParams();
-  const mod = getModule(moduleId);
+  const locale = useLocale((s) => s.locale);
+  const ui = useUI(locale);
+  const mod = getLocalizedModule(moduleId, locale);
   const isComplete = useProgress((s) => s.completedTaskIds);
 
   if (!mod) {
     return (
       <div className="container">
-        <h1>Module not found</h1>
-        <Link to="/">Back</Link>
+        <h1>{ui.moduleNotFound}</h1>
+        <Link to="/">{ui.backToModules}</Link>
       </div>
     );
   }
 
+  const difficultyLabel: Record<string, string> = {
+    easy: ui.easy,
+    medium: ui.medium,
+    hard: ui.hard,
+  };
+
   return (
     <div className="container">
       <Link to="/" className="backlink">
-        ← All modules
+        {ui.backToModules}
       </Link>
       <header className="modhead">
         <div>
@@ -41,7 +45,7 @@ export function ModulePage() {
 
       {mod.lessons.length > 0 && (
         <section>
-          <h2>Lessons</h2>
+          <h2>{ui.lessons}</h2>
           <ul className="lessonlist">
             {mod.lessons.map((l) => (
               <li key={l.id}>
@@ -53,19 +57,21 @@ export function ModulePage() {
       )}
 
       <section>
-        <h2>Tasks</h2>
+        <h2>{ui.tasks}</h2>
         <ul className="tasklist">
           {mod.tasks.map((t) => (
             <li key={t.id} className="taskcard">
               <Link to={`/t/${t.id}`} className="taskcard__link">
                 <div className="taskcard__row">
                   <h3>{t.title}</h3>
-                  {isComplete[t.id] && <span className="badge badge--done">done</span>}
+                  {isComplete[t.id] && (
+                    <span className="badge badge--done">{ui.done}</span>
+                  )}
                 </div>
                 <p>{t.description}</p>
                 <div className="taskcard__meta">
                   <span className={`pill pill--${t.difficulty}`}>
-                    {DIFFICULTY_LABEL[t.difficulty]}
+                    {difficultyLabel[t.difficulty] ?? t.difficulty}
                   </span>
                   <span className="pill">{t.taskType}</span>
                   {t.tags.slice(0, 3).map((tag) => (

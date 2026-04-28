@@ -1,16 +1,20 @@
 import { Link, useParams } from "react-router-dom";
-import { getModule } from "../content";
+import { getLocalizedModule } from "../content";
+import { useLocale } from "../i18n";
+import { useUI } from "../i18n/ui";
 
 export function LessonPage() {
   const { moduleId = "", lessonId = "" } = useParams();
-  const mod = getModule(moduleId);
+  const locale = useLocale((s) => s.locale);
+  const ui = useUI(locale);
+  const mod = getLocalizedModule(moduleId, locale);
   const lesson = mod?.lessons.find((l) => l.id === lessonId);
 
   if (!mod || !lesson) {
     return (
       <div className="container">
-        <h1>Lesson not found</h1>
-        <Link to="/">Back</Link>
+        <h1>{ui.lessonNotFound}</h1>
+        <Link to="/">{ui.backToModules}</Link>
       </div>
     );
   }

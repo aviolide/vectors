@@ -219,6 +219,18 @@ a:hover { text-decoration: underline; }
 .taskpage__actions { display: flex; gap: 8px; margin-top: 16px; }
 .taskpage__actions button { flex: 1; }
 
+.locale-toggle {
+  display: flex; border: 1px solid var(--line); border-radius: var(--r-sm);
+  overflow: hidden; margin-left: auto;
+}
+.locale-toggle button {
+  background: none; border: none; color: var(--muted);
+  padding: 4px 10px; cursor: pointer; font-size: 12px;
+  font-weight: 600; letter-spacing: 0.5px;
+}
+.locale-toggle button.active { background: var(--bg-elev-2); color: var(--text); }
+.locale-toggle button:hover:not(.active) { color: var(--text); }
+
 @media (max-width: 920px) {
   .taskpage { grid-template-columns: 1fr; height: auto; }
   .taskpage__panel { border-right: 0; border-bottom: 1px solid var(--line); }
