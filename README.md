@@ -180,7 +180,29 @@ reference it from a task with `{ type: "function", validator: "myValidator" }`.
 
 ---
 
-## Bonus / future ideas
+## Localization
+
+The platform supports multiple languages via a lightweight i18n scaffold:
+
+- **`src/i18n/index.ts`** — `useLocale` Zustand store (persisted to `localStorage`)
+- **`src/i18n/ui.ts`** — UI strings (44 keys in EN + RU)
+- **`src/i18n/localize.ts`** — `localizeModule(module, tx)` deep-merge utility
+- **`src/content/translations/ru.ts`** — Russian content translations
+- **`src/content/index.ts`** — `getLocalizedModule(id, locale)` and `getLocalizedTask(id, locale)` accessors
+
+Pages and components read `locale` from the store and call `useUI(locale)` for UI strings or `getLocalizedModule(id, locale)` for content.
+
+### Adding a new language
+
+1. Create `src/content/translations/xx.ts` exporting a `ContentTranslations` object.
+2. Import and wire into the accessors in `src/content/index.ts`.
+3. Add UI strings to `src/i18n/ui.ts` (extend the `UIStrings` type and add a translations object).
+4. Update `src/i18n/index.ts` type `Locale = "en" | "xx"`.
+5. (Optional) Add a locale option to the `LocaleToggle` button in `src/components/LocaleToggle.tsx`.
+
+The `localizeModule` function preserves all code fields (`starterCode`, `solutionCode`, `validation`, etc.) — only display text (titles, descriptions, hints, theory) is translated. Validation rules, task types, and difficulty ratings remain language-agnostic.
+
+---
 
 - **Gamification**: XP per task by difficulty (1/3/5), streaks via daily
   task counter in the store, skill-tree visualization on the home page.
